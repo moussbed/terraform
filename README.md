@@ -68,8 +68,27 @@ And now, we have to specific the var file
   $ terraform apply -var-file terraform-dev.tfvars
 ```
 
+#### Environment variables
 
+Set environment variables that Terraform will pick up
 
+```bash
+  $ export AWS_ACCESS_KEY_ID=XXXXXX
+  $ export AWS_SECRET_ACCESS_KEY=XXXXXX
+```
+Now do 
+
+```bash
+  $ terraform apply -var-file terraform-dev.tfvars
+```
+If we have already .aws/credentials directory in our environment it isn't necessary to export AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables because Terraform know where to find these variables 
+
+#### Set variable using TF environment variable
+Define a custom variable environment. To do that we must to prefix our environment variable by TF_VAR
+```bash
+  $ export TF_VAR_availability_zone="us-east-2a"
+```
+and reference it in the variable which have name "availability_zone" in our TF configure file  
 
 
 
