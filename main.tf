@@ -4,10 +4,9 @@ provider "aws" {
   secret_key = "XXXXXX"
 }
 
-variable "vpc-cidr-block" {
-  description= "vpc cidr block"
-  default = "10.0.0.0/16"
-  type = string
+variable "cidr-block" {
+  description= "vpc and subnets cidr block"
+  type = list(string)
 }
 
 variable "environment" {
@@ -15,19 +14,15 @@ variable "environment" {
 }
 
 resource "aws_vpc" "dev-vpc" {
-  cidr_block = var.vpc-cidr-block
+  cidr_block = var.cidr-block[0]
   tags = {
       Name : var.environment
   }
 }
 
-variable "subnet-cidr-block" {
-  description= "subnet cidr block"
-}
-
 resource "aws_subnet" "dev-subnet-1" {
   vpc_id = aws_vpc.dev-vpc.id
-  cidr_block = var.subnet-cidr-block
+  cidr_block = var.cidr-block[1]
   availability_zone = "us-east-2a"
   tags = {
       Name : "dev-subnet-1"
