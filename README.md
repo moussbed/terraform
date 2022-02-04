@@ -90,5 +90,27 @@ Define a custom variable environment. To do that we must to prefix our environme
 ```
 and reference it in the variable which have name "availability_zone" in our TF configure file  
 
+#### Provisioners
+Provisioners are not recommended by Terraform
+- Use user_data if available
+- provisioners break idempotency concept
+- TF doesn't know what you execute
+- provisioners break current-desired state comparison (TF doesn't know what wrote in our script)
+
+Alternative to remote-exec provisioner 
+- Use configuration management tools like ansible or chef
+- Once serve provisioned, hand over to those tools
+
+Alternative to local-exec provisioner 
+- Use "local" provider
+
+Alternative 
+- Execute scripts separate from Terraform
+- from CI/CD tool
+
+
+
+
+
 
 
