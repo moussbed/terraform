@@ -9,6 +9,7 @@ variable "env_prefix" {}
 variable "my_ip" {}
 variable "instance_type" {}
 variable "public_key_location" {}
+variable "private_key_location" {}
 
 
 # VPC (Virtual Private Cloud)
@@ -123,7 +124,39 @@ resource "aws_instance" "myapp-server" {
    key_name = aws_key_pair.myapp-ssh-key-pair.key_name
 
    # Execute command inside the ec2 instance
-   user_data = file("entry-script.sh")
+   # With this manner we don't have control.
+   # We don't know if the commands were executed properly
+   # Passing data to AWS
+   # user_data = file("entry-script.sh")
+
+   # It's why we use provisioner to remotely execute
+   provisioner "remote-exec" {
+     # Inline script. Each line will be executed  
+     /*inline = [
+       "export ENV=dev",
+       "mkdir newDir"
+     ]*/
+
+     # This script must already on the server
+     # We then copy it via file provisioner
+     script = file("entry-script.sh")
+   }
+   provisioner "file" {
+       source = "entry-script.sh"
+       destination = "/home/ec2-user/entry-script.sh"
+   }
+   # Connect via ssh using Terraform and execute remote-exec provisioner
+   connection {
+       type = "ssh"
+       host = self.public_ip
+       user = "ec2-user"
+       private_key = file(var.private_key_location)
+   }
+ 
+   # Invokes a local executable after resource created
+   provisioner "local-exec" {
+     command = "echo successful!"
+   }
 
    tags = {
        Name: "${var.env_prefix}-server"
