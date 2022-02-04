@@ -105,7 +105,7 @@ output "aws_ami_id" {
 # SSH Key Pair 
 resource "aws_key_pair" "myapp-ssh-key-pair" {
  key_name = "server-myapp-key"
- public_key = "${file(var.public_key_location)}"
+ public_key = file(var.public_key_location)
 }
 
 # EC2 (Elastic Compute Cloud)
@@ -123,13 +123,7 @@ resource "aws_instance" "myapp-server" {
    key_name = aws_key_pair.myapp-ssh-key-pair.key_name
 
    # Execute command inside the ec2 instance
-   user_data = <<EOF
-                   #!/bin/bash
-                   sudo yum update -y && sudo yum install docker -y 
-                   sudo systemctl start docker
-                   sudo usermod -aG docker ec2-user
-                   docker run -p 8080:80 nginx 
-               EOF
+   user_data = file("entry-script.sh")
 
    tags = {
        Name: "${var.env_prefix}-server"
