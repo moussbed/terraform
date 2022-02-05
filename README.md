@@ -108,7 +108,8 @@ Alternative
 - Execute scripts separate from Terraform
 - from CI/CD tool
 
-
+#### Modules
+When we add the new module, we must type command " terraform init" before apply
 
 
 
