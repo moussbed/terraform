@@ -68,9 +68,21 @@ resource "aws_instance" "myapp-server" {
    # With this manner we don't have control.
    # We don't know if the commands were executed properly
    # Passing data to AWS
-   user_data = file("entry-script.sh")
+   # user_data = file("entry-script.sh")
 
    tags = {
        Name: "${var.env_prefix}-server"
+   }
+}
+
+resource "null_resource" "configure_server" {
+
+  triggers = {
+    trigger = aws_instance.myapp-server.public_ip
+  }
+  
+   provisioner "local-exec" {
+      working_dir = "directory where ansible project is"
+      command = "ansible-playbook --inventory ${aws_instance.myapp-server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user deploy-docker.yaml"
    }
 }

@@ -5,3 +5,4 @@ variable "public_key_location" {}
 variable "instance_type" {}
 variable "subnet_id" {}
 variable "availability_zone" {}
+variable "ssh_private_key" {}
